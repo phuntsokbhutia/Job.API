@@ -11,6 +11,7 @@ namespace Job.Application.Interface
     {
         Task<APIResponseDTO> RegisterUserAsync(RegisterUserDTO dto);
 
-        //Task<APIResponseDTO> LoginAsync(LoginDTO dto);
+        Task<APIResponseDTO> LoginUserAsync(LoginDTO dto);
+        Task<APIResponseDTO> GetAllUserAsync();
     }
 }

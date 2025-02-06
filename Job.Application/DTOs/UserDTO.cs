@@ -25,4 +25,20 @@ namespace Job.Application.DTOs
         [Compare("password", ErrorMessage = "Passwords do not match.")]
         public string confirm_password { get; set; }
     }
+
+
+    public class GetUserDTO
+    {
+        public string id { get; set; }
+        public string user_name { get; set; }
+        public string email { get; set; }
+
+    }
+
+
+
+
+
+
+
 }

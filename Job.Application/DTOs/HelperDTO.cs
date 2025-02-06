@@ -14,7 +14,8 @@ namespace Job.Application.DTOs
     }
     public class LoginDTO
     {
-        public string email_address = string.Empty;
-        public string password = string.Empty;
+        public string email { get; set; }
+        public string password { get; set; }
     }
+
 }
