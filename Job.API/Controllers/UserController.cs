@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Job.Infrastructure.Services;
 using Job.Application.Interface;
 using Job.Application.DTOs;
+using Microsoft.AspNetCore.Identity;
 
 namespace Job.API.Controllers
 {
@@ -21,12 +22,32 @@ namespace Job.API.Controllers
         }
 
         [HttpPost("Register")]
-        public async Task<IActionResult> RegisterUser([FromBody] RegisterUserDTO dto)
+        public async Task<APIResponseDTO> RegisterUser([FromBody] RegisterUserDTO dto)
         {
-           var a= await _userService.RegisterUserAsync(dto);
-            return Ok(a);
+           return await _userService.RegisterUserAsync(dto);
 
         }
+        // POST: api/User/Login
+        [HttpPost("Login")]
+
+        public async Task<APIResponseDTO> LoginUser([FromBody] LoginDTO dto)
+        {
+            // Call the service method to login user
+           return  await _userService.LoginUserAsync(dto);
+            
+          
+        }
+        [HttpGet("GetUsers")]
+
+        public async Task<APIResponseDTO> GetAllUsers()
+        {
+            return await _userService.GetAllUserAsync();
+        }
+
+
+
+
+
     }
 }
 
