@@ -44,6 +44,12 @@ namespace Job.API.Controllers
             return await _userService.GetAllUserAsync();
         }
 
+          [HttpPost("AddJobs")]
+
+        public async Task<APIResponseDTO> Addjobs(JobsDTO jobsDTO)
+        {
+            return await _userService.AddJobAsync(jobsDTO);
+        }
 
 
 

@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using Job.Domain.Entities;
 
 namespace Job.Infrastructure.Services
 {
@@ -21,12 +22,14 @@ namespace Job.Infrastructure.Services
         {
             private readonly UserManager<ApplicationUser> _userManager;
             private readonly IConfiguration _configuration;
+            private readonly AppDbContext _appDbContext;
 
             public UserService(UserManager<ApplicationUser> userManager,
-                               IConfiguration configuration)
+                               IConfiguration configuration, AppDbContext appDbContext)
             {
                 _userManager = userManager;
                 _configuration = configuration;
+                _appDbContext = appDbContext;
             }
 
             public async Task<APIResponseDTO> RegisterUserAsync(RegisterUserDTO dto)
@@ -163,6 +166,74 @@ namespace Job.Infrastructure.Services
                     data = users  // Return the list of users here.
                 };
             }
+
+            public async Task<APIResponseDTO> AddJobAsync(JobsDTO jobsDTO)
+            {
+                // Map JobsDTO to Job entity
+                var job = new job_details
+                {
+                    Title = jobsDTO.Title,
+                    Description = jobsDTO.Description,
+                    Salary = jobsDTO.Salary,
+                    ContactEmail = jobsDTO.ContactEmail,
+                    ContactPhone = jobsDTO.ContactPhone,
+                    Location = jobsDTO.Location,
+                    CompanyName = jobsDTO.CompanyName,
+                    CompanyDescription = jobsDTO.CompanyDescription,
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow
+                };
+
+                // Add the job to the DbContext
+                _appDbContext.Jobs.Add(job);
+
+                try
+                {
+                    // Save changes to the database asynchronously
+                    await _appDbContext.SaveChangesAsync();
+
+                    // Return a successful response
+                    return new APIResponseDTO
+                    {
+                        status = "Success",
+                        message = "Job added successfully."
+                    };
+                }
+                catch (Exception ex)
+                {
+                    // Handle any database errors
+                    return new APIResponseDTO
+                    {
+                        status = "Success",
+                        message = $"Error adding job: {ex.Message}"
+                    };
+                }
+            }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         }
     }
 }
