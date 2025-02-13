@@ -36,9 +36,4 @@ namespace Job.Application.DTOs
     }
 
 
-
-
-
-
-
 }

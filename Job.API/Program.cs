@@ -26,6 +26,8 @@ builder.Services.AddControllers();
 
 // Register Dependency Injection services
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IJobService, JobService>();
+
 
 // Add Swagger for API documentation
 builder.Services.AddEndpointsApiExplorer();

@@ -10,7 +10,6 @@ namespace Job.Application.Interface
     public interface IUserService
     {
         Task<APIResponseDTO> RegisterUserAsync(RegisterUserDTO dto);
-
         Task<APIResponseDTO> LoginUserAsync(LoginDTO dto);
         Task<APIResponseDTO> GetAllUserAsync();
     }

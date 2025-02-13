@@ -51,6 +51,63 @@ namespace Job.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "job_details",
+                columns: table => new
+                {
+                    JobId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    JobType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    Salary = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    ContactEmail = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ContactPhone = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Location = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    CompanyName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    CompanyDescription = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_job_details", x => x.JobId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "user_job_apply",
+                columns: table => new
+                {
+                    user_job_appply_id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    user_id = table.Column<int>(type: "int", nullable: false),
+                    job_id = table.Column<int>(type: "int", nullable: false),
+                    status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    application_date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    phone_number = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    skills = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_user_job_apply", x => x.user_job_appply_id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "users",
+                columns: table => new
+                {
+                    user_id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    asp_user_id = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    user_name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    email_address = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_users", x => x.user_id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AspNetRoleClaims",
                 columns: table => new
                 {
@@ -213,6 +270,15 @@ namespace Job.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "job_details");
+
+            migrationBuilder.DropTable(
+                name: "user_job_apply");
+
+            migrationBuilder.DropTable(
+                name: "users");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
