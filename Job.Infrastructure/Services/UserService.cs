@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using Job.Domain.Entities;
 
 namespace Job.Infrastructure.Services
 {
@@ -21,12 +22,15 @@ namespace Job.Infrastructure.Services
         {
             private readonly UserManager<ApplicationUser> _userManager;
             private readonly IConfiguration _configuration;
+            private readonly AppDbContext _appDbContext;
 
             public UserService(UserManager<ApplicationUser> userManager,
-                               IConfiguration configuration)
+                               IConfiguration configuration,
+                               AppDbContext appDbContext)
             {
                 _userManager = userManager;
                 _configuration = configuration;
+                _appDbContext = appDbContext;
             }
 
             public async Task<APIResponseDTO> RegisterUserAsync(RegisterUserDTO dto)
@@ -41,15 +45,27 @@ namespace Job.Infrastructure.Services
                     };
                 }
 
-                var user =
+                var userDetails =
                     new ApplicationUser { UserName = dto.user_name, Email = dto.email };
 
-                var result = await _userManager.CreateAsync(user, dto.password);
+                var result = await _userManager.CreateAsync(userDetails, dto.password);
 
                 if (result.Succeeded)
                 {
                     // ✅ Assign the "User" role to every new registered user
-                    await _userManager.AddToRoleAsync(user, "User");
+                    await _userManager.AddToRoleAsync(userDetails, "User");
+
+                    users users = new users
+                    {
+                       email_address = dto.email,
+                       user_name = dto.user_name,
+                       asp_user_id=userDetails.Id,
+                    };
+
+                    // Add to your custom users table (you will need your DbContext for this)
+                    _appDbContext.users.Add(users);
+                    await _appDbContext.SaveChangesAsync();
+
 
                     return new APIResponseDTO
                     {
@@ -57,7 +73,7 @@ namespace Job.Infrastructure.Services
                         message = "User registered successfully ",
                     };
                 }
-
+               
                 return new APIResponseDTO
                 {
                     status = "Error",
