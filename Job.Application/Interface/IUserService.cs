@@ -14,5 +14,8 @@ namespace Job.Application.Interface
         Task<APIResponseDTO> LoginUserAsync(LoginDTO dto);
         Task<APIResponseDTO> GetAllUserAsync();
         Task<APIResponseDTO> AddJobAsync(JobsDTO dto);
+        Task<APIResponseDTO> GetAllJobsAsync();
+        Task<APIResponseDTO> GetJobByIdAsync(int id);
+        Task<APIResponseDTO> ApplyJobAsync(JobApplyDTO dto);
     }
 }

@@ -7,7 +7,8 @@ namespace Job.Domain.Entities
     {
         [Key]
         public int JobId { get; set; }
-
+        [Required]
+        public string JobType { get; set; }
         [Required]
         [StringLength(100, MinimumLength = 3)]
         public string Title { get; set; }

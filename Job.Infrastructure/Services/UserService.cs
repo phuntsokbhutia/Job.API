@@ -13,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Job.Domain.Entities;
+using Azure.Core;
 
 namespace Job.Infrastructure.Services
 {
@@ -172,6 +173,7 @@ namespace Job.Infrastructure.Services
                 // Map JobsDTO to Job entity
                 var job = new job_details
                 {
+                    JobType = jobsDTO.JobType,
                     Title = jobsDTO.Title,
                     Description = jobsDTO.Description,
                     Salary = jobsDTO.Salary,
@@ -212,28 +214,157 @@ namespace Job.Infrastructure.Services
 
 
 
+            public async Task<APIResponseDTO> GetAllJobsAsync()
+            {
+
+
+                // Fetch jobs from the database
+                var jobs = await _appDbContext.Jobs.AsNoTracking()
+                    .Select(u => new GetJobsDTO
+                    {
+                        JobId = u.JobId,
+                        Title = u.Title,
+                        Description = u.Description,
+                        Salary = u.Salary,
+                        ContactEmail = u.ContactEmail,
+                        ContactPhone = u.ContactPhone,
+                        Location = u.Location,
+                        CompanyName = u.CompanyName,
+                        CompanyDescription = u.CompanyDescription,
+                    })
+               .ToListAsync();
+
+                if (jobs == null)
+                {
+                    return new APIResponseDTO
+                    {
+                        status = "Information",
+                        message = "No Data found.",
+                    };
+                }
+
+                // Create and return the API response
+                return new APIResponseDTO
+                {
+                    status = "Success",
+                    message = "Data retrieved successfully.",
+                    data = jobs  // Return the list of jobs here.
+                };
+
+
+            }
+            public async Task<APIResponseDTO> GetJobByIdAsync(int id)
+            {
+
+
+                try
+                {
+                    // Fetch jobs from the database
+                    var jobs = await _appDbContext.Jobs.AsNoTracking().FirstOrDefaultAsync(w => w.JobId == id);
 
 
 
+                    var jobdetails = new JobsDTO
+                    {
+
+                        Title = jobs.Title,
+                        Description = jobs.Description,
+                        Salary = jobs.Salary,
+                        ContactEmail = jobs.ContactEmail,
+                        ContactPhone = jobs.ContactPhone,
+                        Location = jobs.Location,
+                        CompanyName = jobs.CompanyName,
+                        CompanyDescription = jobs.CompanyDescription
+                    };
+
+                    // Create and return the API response
+                    return new APIResponseDTO
+                    {
+                        status = "Success",
+                        message = "Data retrieved successfully.",
+                        data = jobdetails  // Return the list of jobs here.
+                    };
+                }
+
+                catch (Exception ex)
+                {
+                    return new APIResponseDTO
+                    {
+                        status = "Error",
+                        message = $"Please try again later: {ex.Message} ",
+                    };
+
+                }
+
+            }
 
 
+            public async Task<APIResponseDTO> ApplyJobAsync(JobApplyDTO dto)
+            {
+                // Validate user existence
+                var user = await _userManager.FindByIdAsync(dto.UserId); // Ensure FindByIdAsync is used for UserId
+                if (user == null)
+                {
+                    // Return failure response
+                    return new APIResponseDTO
+                    {
+                        status = "Info",
+                        message = "User not found."
+                    };
+                }
 
+                // Validate job existence
+                var job = await _appDbContext.Jobs.FindAsync(dto.JobId);
+                if (job == null)
+                {
+                    // Return failure response
+                    return new APIResponseDTO
+                    {
+                        status = "Success",
+                        message = "Job not found."
+                    };
+                }
 
+                // Check if the user has already applied for this job
+                var existingApplication = await _appDbContext.user_job_apply
+                    .FirstOrDefaultAsync(ua => ua.user_id == dto.UserId && ua.job_id == dto.JobId);
+                if (existingApplication != null)
+                {
+                    // Return failure response if the user has already applied for the job
+                    return new APIResponseDTO
+                    {
+                        status = "Success",
+                        message = "User has already applied for this job."
+                    };
+                }
 
+                // Create the job application record
+                var application = new user_job_apply
+                {
+                    user_id = dto.UserId,
+                    job_id = dto.JobId,
+                    phone_number = dto.PhoneNumber,
+                    description = dto.Description,
+                    skills = dto.Skills,
+                    status = "pending", // Set initial status
+                    application_date = DateTime.UtcNow
+                };
 
+                // Add the application to the context and save changes to the database
+                _appDbContext.user_job_apply.Add(application);
+                await _appDbContext.SaveChangesAsync();
 
-
-
-
-
-
-
-
-
-
+                // Return success response
+                return new APIResponseDTO
+                {
+                    status = "Success",
+                    message = "Job application submitted successfully!"
+                };
+            }
 
 
 
         }
     }
+
 }

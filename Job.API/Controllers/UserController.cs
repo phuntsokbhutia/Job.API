@@ -6,6 +6,7 @@ using Job.Infrastructure.Services;
 using Job.Application.Interface;
 using Job.Application.DTOs;
 using Microsoft.AspNetCore.Identity;
+using Job.Domain.Entities;
 
 namespace Job.API.Controllers
 {
@@ -50,9 +51,20 @@ namespace Job.API.Controllers
         {
             return await _userService.AddJobAsync(jobsDTO);
         }
-
-
-
+        [HttpGet("GetAllJobs")]
+        public async Task<APIResponseDTO> GetJobs( )
+        {
+            return await _userService.GetAllJobsAsync();
+        }
+        [HttpGet("GetJobById")]
+        public async Task<APIResponseDTO> GetJobById(int id )
+        {
+            return await _userService.GetJobByIdAsync(id);
+        }
+         public async Task<APIResponseDTO> ApplyJobAsync(JobApplyDTO dto)
+        {
+            return await _userService.ApplyJobAsync(dto);
+        }
 
     }
 }
