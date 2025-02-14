@@ -259,6 +259,31 @@ namespace Job.Infrastructure.Services
             };
         }
 
+        public async Task<APIResponseDTO> GetAllJobDetails()
+        {
+
+            // Perform JOIN between user_job_apply and job_details tables
+            var jobApplications = await (from ja in _appDbContext.user_job_apply
+                                         join job in _appDbContext.job_details on ja.job_id equals job.JobId
+                                         join user in _appDbContext.users on ja.user_id equals user.user_id
+                                         select new AllJobApplyDetailsDTO
+                                         {
+                                             JobId = ja.job_id,
+                                             Status = ja.status,
+                                             Title = job.Title,
+                                             UserId = user.user_id,
+                                             UserName = user.user_name,
+                                         }).ToListAsync();
+
+            // Return the result wrapped in an APIResponseDTO
+            return new APIResponseDTO
+            {
+                status = "Success",
+                message = "Data retrieved successfully!",
+                data = jobApplications
+            };
+        }
+
         public async Task<APIResponseDTO> UpdateJobApplicationStatus(UpdateJobStatusDTO dto)
         {
             // Verify if the user exists in the AspNetUsers table (user verification)

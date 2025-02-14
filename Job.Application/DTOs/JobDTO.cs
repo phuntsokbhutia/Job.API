@@ -90,6 +90,16 @@ namespace Job.Application.DTOs
         public string Title { get; set; }
         public string Status { get; set; }
     }
+    public class AllJobApplyDetailsDTO
+    {
+        public int JobId { get; set; }
+        public string Title { get; set; }
+        public string Status { get; set; }
+        public int UserId { get; set; }
+        public string UserName { get; set; }
+
+
+    }
     public class UpdateJobStatusDTO
     {
         public int JobId { get; set; }

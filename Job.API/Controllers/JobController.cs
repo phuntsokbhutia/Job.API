@@ -42,6 +42,11 @@ namespace Job.API.Controllers
         {
             return await _jobService.GetJobDetailsByUser(userId);
         }
+        [HttpGet("GetAllJobDetails")]
+        public async Task<APIResponseDTO> GetAllJobDetails()
+        {
+            return await _jobService.GetAllJobDetails();
+        }
         [HttpPut("UpdateJobApplicationStatus")]
         public async Task<APIResponseDTO> UpdateJobApplicationStatus(UpdateJobStatusDTO dto)
         {

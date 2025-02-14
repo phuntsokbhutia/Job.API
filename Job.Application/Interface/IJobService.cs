@@ -14,6 +14,7 @@ namespace Job.Application.Interface
         Task<APIResponseDTO> GetJobByIdAsync(int id);
         Task<APIResponseDTO> ApplyJobAsync(JobApplyDTO dto);
         Task<APIResponseDTO> GetJobDetailsByUser(int userId);
+        Task<APIResponseDTO> GetAllJobDetails();
         Task<APIResponseDTO> UpdateJobApplicationStatus(UpdateJobStatusDTO dto);
 
     }
